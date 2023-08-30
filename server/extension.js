@@ -3051,7 +3051,7 @@ var Emittery = class _Emittery {
     if (isMetaEvent(eventName) && !canEmitMetaEvents) {
       throw new TypeError("`eventName` cannot be meta event `listenerAdded` or `listenerRemoved`");
     }
-    this.logIfDebugEnabled("emit", eventName, eventData);
+    this.logIfDebugEnabled("emit", eventName);
     enqueueProducers(this, eventName, eventData);
     const listeners = getListeners(this, eventName) ?? /* @__PURE__ */ new Set();
     const anyListeners = anyMap.get(this);
@@ -7161,7 +7161,7 @@ var Emittery2 = class _Emittery2 {
     if (isMetaEvent2(eventName) && !canEmitMetaEvents2) {
       throw new TypeError("`eventName` cannot be meta event `listenerAdded` or `listenerRemoved`");
     }
-    this.logIfDebugEnabled("emit", eventName, eventData);
+    this.logIfDebugEnabled("emit", eventName);
     enqueueProducers2(this, eventName, eventData);
     const listeners = getListeners2(this, eventName) ?? /* @__PURE__ */ new Set();
     const anyListeners = anyMap2.get(this);
@@ -8818,7 +8818,7 @@ var GptEncoding = class _GptEncoding {
 var api = GptEncoding.getEncodingApi("cl100k_base", () => convertTokenBytePairEncodingFromTuples(cl100k_base_default));
 var { decode, decodeAsyncGenerator, decodeGenerator, encode: encode3, encodeGenerator, isWithinTokenLimit, encodeChat, encodeChatGenerator } = api;
 
-// node_modules/omnilib-docs/tokenizer.js
+// node_modules/omnilib-llms/tokenizer.js
 var Tokenizer = class {
   constructor(params = null) {
   }
@@ -8833,7 +8833,7 @@ var Tokenizer = class {
   }
 };
 
-// node_modules/omnilib-docs/tokenizer_Openai.js
+// node_modules/omnilib-llms/tokenizer_Openai.js
 var Tokenizer_Openai = class extends Tokenizer {
   constructor() {
     super();
@@ -8993,7 +8993,10 @@ default_providers.push(llm_Openai);
 async function queryLlmByModelId(ctx, prompt3, instruction, model_id, temperature = 0, args = null) {
   const splits = getModelNameAndProviderFromId(model_id);
   const model_provider = splits.model_provider;
-  const block_name = `omni-extension-document_processing:${model_provider}.llm_query`;
+  let block_name = `omni-extension-document_processing:${model_provider}.llm_query`;
+  if (model_provider == "openai") {
+    block_name = `omni-core-llms:${model_provider}.llm_query`;
+  }
   const block_args = { prompt: prompt3, instruction, model_id, temperature, args };
   const response = await runBlock(ctx, block_name, block_args);
   return response;
@@ -9022,8 +9025,8 @@ var LLM_QUERY_CONTROL = null;
 function createLlmQueryComponent(model_provider, links3, payloadParser) {
   const group_id = model_provider;
   const id = `llm_query`;
-  const title = `The Real LLM Query: ${model_provider}`;
-  const category = "Text Manipulation";
+  const title = `LLM Query via ${model_provider}`;
+  const category = "LLM";
   const description = `Query a LLM with ${model_provider}`;
   const summary = `Query the specified LLM via ${model_provider}`;
   const inputs = get_llm_query_inputs();
@@ -9074,7 +9077,7 @@ async function runUniversalPayload(payload, ctx) {
 }
 
 // component_LlmManager_Openai.js
-var NS_ONMI2 = "document_processing";
+var MODEL_PROVIDER = "openai";
 async function async_getLlmManagerOpenaiComponent() {
   const llm2 = new Llm_Openai();
   const choices = [];
@@ -9092,7 +9095,7 @@ async function async_getLlmManagerOpenaiComponent() {
   ];
   const controls = null;
   const links3 = {};
-  let component = createComponent(NS_ONMI2, "llm_manager_openai", "LLM Manager: OpenAI", "Text Manipulation", "Manage LLMs from a provider: openai", "Manage LLMs from a provider: openai", links3, inputs, outputs, controls, parsePayload);
+  let component = createComponent(MODEL_PROVIDER, "llm_manager", "LLM Manager of OpenAI models", "LLM", "Manage LLMs from a provider: openai", "Manage LLMs from a provider: openai", links3, inputs, outputs, controls, parsePayload);
   return component;
 }
 async function parsePayload(payload, ctx) {
@@ -9110,12 +9113,12 @@ async function parsePayload(payload, ctx) {
 }
 
 // component_LlmQuery_Openai.js
-var MODEL_PROVIDER = "openai";
+var MODEL_PROVIDER2 = "openai";
 var llm = new Llm_Openai();
 var links2 = {};
-var LlmQueryComponent_Openai = createLlmQueryComponent(MODEL_PROVIDER, links2, runProviderPayload);
+var LlmQueryComponent_Openai = createLlmQueryComponent(MODEL_PROVIDER2, links2, runProviderPayload);
 async function runProviderPayload(payload, ctx) {
-  const { instruction, prompt: prompt3, temperature, model_name, args } = extractPayload(payload, MODEL_PROVIDER);
+  const { instruction, prompt: prompt3, temperature, model_name, args } = extractPayload(payload, MODEL_PROVIDER2);
   const response = await llm.query(ctx, prompt3, instruction, model_name, temperature, args);
   return response;
 }
