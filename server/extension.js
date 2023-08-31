@@ -8990,13 +8990,18 @@ var DEFAULT_LLM_MODEL_ID = "gpt-3.5-turbo|openai";
 var default_providers = [];
 var llm_Openai = new Llm_Openai();
 default_providers.push(llm_Openai);
-async function queryLlmByModelId(ctx, prompt3, instruction, model_id, temperature = 0, args = null) {
+function getBlockName(model_id) {
   const splits = getModelNameAndProviderFromId(model_id);
+  const model_name = splits.model_name;
   const model_provider = splits.model_provider;
-  let block_name = `omni-extension-document_processing:${model_provider}.llm_query`;
+  let block_name = `omni-extension-${model_provider}:${model_provider}.llm_query`;
   if (model_provider == "openai") {
     block_name = `omni-core-llms:${model_provider}.llm_query`;
   }
+  return block_name;
+}
+async function queryLlmByModelId(ctx, prompt3, instruction, model_id, temperature = 0, args = null) {
+  const block_name = getBlockName(model_id);
   const block_args = { prompt: prompt3, instruction, model_id, temperature, args };
   const response = await runBlock(ctx, block_name, block_args);
   return response;
