@@ -3,8 +3,9 @@ import { createComponent } from 'omnilib-utils/component.js';
 import { DEFAULT_LLM_MODEL_ID } from 'omnilib-llms/llms.js';
 import { Llm_Openai } from 'omnilib-llms/llm_Openai.js'
 const MODEL_PROVIDER = 'openai';
+const PROVIDER_NAME = "OpenAI"
 
-export async function async_getLlmManagerOpenaiComponent()
+export async function async_getLlmManagerComponent_Openai()
 {
     const llm = new Llm_Openai();
     const choices = [];
@@ -25,9 +26,10 @@ export async function async_getLlmManagerOpenaiComponent()
 
     const links = {}
 
-    let component = createComponent(MODEL_PROVIDER, 'llm_manager','LLM Manager of OpenAI models', 'LLM','Manage LLMs from a provider: openai', 'Manage LLMs from a provider: openai', links, inputs, outputs, controls, parsePayload );
 
-    return component;
+    const LlmManagerComponent = createComponent(MODEL_PROVIDER, 'llm_manager',`LLM Manager: ${PROVIDER_NAME}`, 'Text Generation',`Manage LLMs from provider: ${PROVIDER_NAME}`, `Manage LLMs from provider: ${PROVIDER_NAME}`, links, inputs, outputs, controls, parsePayload );
+
+    return LlmManagerComponent;
 }
 
 

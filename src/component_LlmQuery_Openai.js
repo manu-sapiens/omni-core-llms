@@ -5,7 +5,7 @@ const MODEL_PROVIDER = 'openai';
 
 const llm = new Llm_Openai();
 const links = {}; // TBD: provide proper links
-const LlmQueryComponent_Openai =  createLlmQueryComponent(MODEL_PROVIDER, links, runProviderPayload );
+export const LlmQueryComponent_Openai =  createLlmQueryComponent(MODEL_PROVIDER, links, runProviderPayload );
 
 async function runProviderPayload(payload, ctx) 
 {
@@ -13,5 +13,3 @@ async function runProviderPayload(payload, ctx)
     const response = await llm.query(ctx, prompt, instruction, model_name, temperature, args);
     return response;
 }
-
-export { LlmQueryComponent_Openai  };

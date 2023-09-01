@@ -5084,8 +5084,9 @@ var reduceDescriptors = (obj, reducer) => {
   const descriptors2 = Object.getOwnPropertyDescriptors(obj);
   const reducedDescriptors = {};
   forEach(descriptors2, (descriptor, name) => {
-    if (reducer(descriptor, name, obj) !== false) {
-      reducedDescriptors[name] = descriptor;
+    let ret;
+    if ((ret = reducer(descriptor, name, obj)) !== false) {
+      reducedDescriptors[name] = ret || descriptor;
     }
   });
   Object.defineProperties(obj, reducedDescriptors);
@@ -5614,9 +5615,6 @@ function formDataToJSON(formData) {
   return null;
 }
 var formDataToJSON_default = formDataToJSON;
-var DEFAULT_CONTENT_TYPE = {
-  "Content-Type": void 0
-};
 function stringifySafely(rawValue, parser, encoder2) {
   if (utils_default.isString(rawValue)) {
     try {
@@ -5632,7 +5630,7 @@ function stringifySafely(rawValue, parser, encoder2) {
 }
 var defaults = {
   transitional: transitional_default,
-  adapter: ["xhr", "http"],
+  adapter: browser_default.isNode ? "http" : "xhr",
   transformRequest: [function transformRequest(data, headers) {
     const contentType = headers.getContentType() || "";
     const hasJSONContentType = contentType.indexOf("application/json") > -1;
@@ -5715,15 +5713,13 @@ var defaults = {
   },
   headers: {
     common: {
-      "Accept": "application/json, text/plain, */*"
+      "Accept": "application/json, text/plain, */*",
+      "Content-Type": void 0
     }
   }
 };
-utils_default.forEach(["delete", "get", "head"], function forEachMethodNoData(method) {
+utils_default.forEach(["delete", "get", "head", "post", "put", "patch"], (method) => {
   defaults.headers[method] = {};
-});
-utils_default.forEach(["post", "put", "patch"], function forEachMethodWithData(method) {
-  defaults.headers[method] = utils_default.merge(DEFAULT_CONTENT_TYPE);
 });
 var defaults_default = defaults;
 var ignoreDuplicateOf = utils_default.toObjectSet([
@@ -5974,7 +5970,15 @@ var AxiosHeaders = class {
   }
 };
 AxiosHeaders.accessor(["Content-Type", "Content-Length", "Accept", "Accept-Encoding", "User-Agent", "Authorization"]);
-utils_default.freezeMethods(AxiosHeaders.prototype);
+utils_default.reduceDescriptors(AxiosHeaders.prototype, ({ value }, key) => {
+  let mapped = key[0].toUpperCase() + key.slice(1);
+  return {
+    get: () => value,
+    set(headerValue) {
+      this[mapped] = headerValue;
+    }
+  };
+});
 utils_default.freezeMethods(AxiosHeaders);
 var AxiosHeaders_default = AxiosHeaders;
 function transformData(fns, response) {
@@ -6472,7 +6476,7 @@ function mergeConfig(config1, config2) {
   });
   return config;
 }
-var VERSION = "1.4.0";
+var VERSION = "1.5.0";
 var validators = {};
 ["object", "boolean", "number", "function", "string", "symbol"].forEach((type, i) => {
   validators[type] = function validator(thing) {
@@ -6575,12 +6579,11 @@ var Axios = class {
       }
     }
     config.method = (config.method || this.defaults.method || "get").toLowerCase();
-    let contextHeaders;
-    contextHeaders = headers && utils_default.merge(
+    let contextHeaders = headers && utils_default.merge(
       headers.common,
       headers[config.method]
     );
-    contextHeaders && utils_default.forEach(
+    headers && utils_default.forEach(
       ["delete", "get", "head", "post", "put", "patch", "common"],
       (method) => {
         delete headers[method];
@@ -6645,7 +6648,7 @@ var Axios = class {
     return buildURL(fullPath, config.params, config.paramsSerializer);
   }
 };
-utils_default.forEach(["delete", "get", "head", "options"], function forEachMethodNoData2(method) {
+utils_default.forEach(["delete", "get", "head", "options"], function forEachMethodNoData(method) {
   Axios.prototype[method] = function(url, config) {
     return this.request(mergeConfig(config || {}, {
       method,
@@ -6654,7 +6657,7 @@ utils_default.forEach(["delete", "get", "head", "options"], function forEachMeth
     }));
   };
 });
-utils_default.forEach(["post", "put", "patch"], function forEachMethodWithData2(method) {
+utils_default.forEach(["post", "put", "patch"], function forEachMethodWithData(method) {
   function generateHTTPMethod(isForm) {
     return function httpMethod(url, data, config) {
       return this.request(mergeConfig(config || {}, {
@@ -6863,6 +6866,7 @@ axios.isAxiosError = isAxiosError;
 axios.mergeConfig = mergeConfig;
 axios.AxiosHeaders = AxiosHeaders_default;
 axios.formToJSON = (thing) => formDataToJSON_default(utils_default.isHTMLForm(thing) ? new FormData(thing) : thing);
+axios.getAdapter = adapters_default.getAdapter;
 axios.HttpStatusCode = HttpStatusCode_default;
 axios.default = axios;
 var axios_default = axios;
@@ -6881,6 +6885,7 @@ var {
   AxiosHeaders: AxiosHeaders2,
   HttpStatusCode: HttpStatusCode2,
   formToJSON,
+  getAdapter,
   mergeConfig: mergeConfig2
 } = axios_default;
 var anyMap2 = /* @__PURE__ */ new WeakMap();
@@ -9083,7 +9088,8 @@ async function runUniversalPayload(payload, ctx) {
 
 // component_LlmManager_Openai.js
 var MODEL_PROVIDER = "openai";
-async function async_getLlmManagerOpenaiComponent() {
+var PROVIDER_NAME = "OpenAI";
+async function async_getLlmManagerComponent_Openai() {
   const llm2 = new Llm_Openai();
   const choices = [];
   const llm_model_types = {};
@@ -9100,8 +9106,8 @@ async function async_getLlmManagerOpenaiComponent() {
   ];
   const controls = null;
   const links3 = {};
-  let component = createComponent(MODEL_PROVIDER, "llm_manager", "LLM Manager of OpenAI models", "LLM", "Manage LLMs from a provider: openai", "Manage LLMs from a provider: openai", links3, inputs, outputs, controls, parsePayload);
-  return component;
+  const LlmManagerComponent = createComponent(MODEL_PROVIDER, "llm_manager", `LLM Manager: ${PROVIDER_NAME}`, "Text Generation", `Manage LLMs from provider: ${PROVIDER_NAME}`, `Manage LLMs from provider: ${PROVIDER_NAME}`, links3, inputs, outputs, controls, parsePayload);
+  return LlmManagerComponent;
 }
 async function parsePayload(payload, ctx) {
   const failure = { result: { "ok": false }, model_id: null };
@@ -9130,7 +9136,7 @@ async function runProviderPayload(payload, ctx) {
 
 // extension.js
 async function CreateComponents() {
-  const LlmManagerOpenaiComponent = await async_getLlmManagerOpenaiComponent();
+  const LlmManagerOpenaiComponent = await async_getLlmManagerComponent_Openai();
   const components = [
     LlmQueryComponent,
     LlmManagerOpenaiComponent,

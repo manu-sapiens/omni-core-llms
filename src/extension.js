@@ -2,7 +2,7 @@
 // extension.js
 import { LlmQueryComponent } from "./component_LlmQuery.js";
 
-import { async_getLlmManagerOpenaiComponent } from "./component_LlmManager_Openai.js";
+import { async_getLlmManagerComponent_Openai } from "./component_LlmManager_Openai.js";
 import { LlmQueryComponent_Openai } from "./component_LlmQuery_Openai.js";
 
 // TBD: Move async_getLlmManagerOobaboogaComponen and LlmManagerLmStudioComponent into their own extension
@@ -10,7 +10,7 @@ import { LlmQueryComponent_Openai } from "./component_LlmQuery_Openai.js";
 
 async function CreateComponents() 
 {
-  const LlmManagerOpenaiComponent = await async_getLlmManagerOpenaiComponent();
+  const LlmManagerOpenaiComponent = await async_getLlmManagerComponent_Openai();
   const components = [
     LlmQueryComponent, 
     LlmManagerOpenaiComponent, 
