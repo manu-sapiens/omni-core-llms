@@ -8086,7 +8086,6 @@ function generateModelId(model_name, model_provider) {
 function getModelNameAndProviderFromId(model_id) {
   if (!model_id)
     throw new Error(`getModelNameAndProviderFromId: model_id is not valid: ${model_id}`);
-  debugger;
   const splits = model_id.split("|");
   if (splits.length != 2)
     throw new Error(`splitModelNameFromType: model_id is not valid: ${model_id}`);
@@ -9070,9 +9069,9 @@ function extractPayload(payload, model_provider) {
 }
 
 // component_LlmQuery.js
-var NS_ONMI = "document_processing";
+var NS_ONMI = "text_generation";
 var links = {};
-var LlmQueryComponent = createComponent(NS_ONMI, "llm_query", "LLM Query", "Text Manipulation", "Query a LLM", "Query the specified LLM", links, get_llm_query_inputs(DEFAULT_LLM_MODEL_ID), LLM_QUERY_OUTPUT, LLM_QUERY_CONTROL, runUniversalPayload);
+var LlmQueryComponent = createComponent(NS_ONMI, "llm_query", "LLM Query", "Text Generation", "Query a LLM", "Query the specified LLM", links, get_llm_query_inputs(DEFAULT_LLM_MODEL_ID), LLM_QUERY_OUTPUT, LLM_QUERY_CONTROL, runUniversalPayload);
 async function runUniversalPayload(payload, ctx) {
   const failure = { result: { "ok": false }, answer_text: "", answer_json: null };
   if (!payload)
