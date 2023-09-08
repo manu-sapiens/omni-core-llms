@@ -29,6 +29,7 @@ const shimBanner = {
   "js": ESM_REQUIRE_SHIM
 };
 
+const externals = ['mercs_rete', 'mercs_shared', 'mercs_client' ];
 const buildOptions_fix = {
       format: "esm",
       target: "esnext",
@@ -37,7 +38,7 @@ const buildOptions_fix = {
       bundle : true,
       entryPoints: ['./extension.js'],
       outfile: '../server/extension.js',
-      external: ['mercs_rete'],
+      external: externals,
       loader: {
         '.node': 'binary',
       },  
@@ -51,7 +52,7 @@ const buildOptions_good = {
   format: 'esm',
   platform: 'node',
   target: 'es2020',
-  external: ['mercs_rete'], // Add other options as needed
+  external: externals, // Add other options as needed
   loader: {
     '.node': 'binary',
   },  
@@ -67,6 +68,7 @@ const result = esbuild.build(buildOptions_fix).then((result) =>
   // Log some summary information
   const { inputs } = result.metafile;
   const inputCount = Object.keys(inputs).length;
+  //@ts-ignore
   const totalInputBytes = Object.values(result.metafile.inputs).reduce((sum, input) => sum + input.bytes, 0);
 
   console.log(`Total input files: ${inputCount}`);
@@ -75,6 +77,7 @@ const result = esbuild.build(buildOptions_fix).then((result) =>
   // Log some summary information about the outputs
   const { outputs } = result.metafile;
   const outputCount = Object.keys(outputs).length;
+  //@ts-ignore
   const totalOutputBytes = Object.values(result.metafile.outputs).reduce((sum, output) => sum + output.bytes, 0);
 
   console.log(`Total output files: ${outputCount}`);

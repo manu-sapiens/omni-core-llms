@@ -7,7 +7,7 @@ const NS_ONMI = 'text_generation';
 
 const links = {};
 
-const LlmQueryComponent = createComponent(NS_ONMI, 'llm_query','LLM Query', 'Text Generation','Query a LLM', 'Query the specified LLM', links, get_llm_query_inputs(DEFAULT_LLM_MODEL_ID), LLM_QUERY_OUTPUT, LLM_QUERY_CONTROL, runUniversalPayload );
+const LlmQueryComponent = createComponent(NS_ONMI, 'llm_query_universal','LLM Query (Universal)', 'Text Generation','Query a LLM using its id', 'Query the specified LLM from various providers', links, get_llm_query_inputs(DEFAULT_LLM_MODEL_ID), LLM_QUERY_OUTPUT, LLM_QUERY_CONTROL, runUniversalPayload );
 
 async function runUniversalPayload(payload, ctx) 
 {
