@@ -1,5 +1,6 @@
 const esbuild = require('esbuild');
 const fs = require('fs');
+const path = require('path')
 
 /*
 const { commonjs } = require("@hyrious/esbuild-plugin-commonjs");
@@ -29,7 +30,7 @@ const shimBanner = {
   "js": ESM_REQUIRE_SHIM
 };
 
-const externals = ['mercs_rete', 'mercs_shared', 'mercs_client' ];
+const externals = ['mercs_rete', 'mercs_shared', 'mercs_client', 'gpt-tokenizer' ];
 const buildOptions_fix = {
       format: "esm",
       target: "esnext",
@@ -45,7 +46,7 @@ const buildOptions_fix = {
       metafile: true,
     };
 
-const buildOptions_good = {
+const buildOptions_simple = {
   entryPoints: ['./extension.js'],
   bundle: true,
   outfile: '../server/extension.js',
@@ -59,11 +60,13 @@ const buildOptions_good = {
   metafile: true,
 };
 
+build(buildOptions_fix);
 
 
-const result = esbuild.build(buildOptions_fix).then((result) => 
-{
-  console.log('\n--------------\nBuild completed successfully!\n');
+
+async function build(build_option) {
+
+  const result = await esbuild.build(build_option);
 
   // Log some summary information
   const { inputs } = result.metafile;
@@ -83,8 +86,8 @@ const result = esbuild.build(buildOptions_fix).then((result) =>
   console.log(`Total output files: ${outputCount}`);
   console.log(`Total output bytes: ${totalOutputBytes.toLocaleString()}`);
 
-  // Additional analysis or logging as needed
-
-}).catch(() => {
-  console.error('Build failed');
-});
+  if (result.metafile) {
+    console.log("Saving metadata to ./metafile.json");
+    await fs.promises.writeFile('./metafile.json', JSON.stringify(result.metafile));
+  }
+}

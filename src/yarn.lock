@@ -87,7 +87,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/parser@npm:^7.22.15":
+"@babel/parser@npm:^7.22.15, @babel/parser@npm:^7.22.16":
   version: 7.22.16
   resolution: "@babel/parser@npm:7.22.16"
   bin:
@@ -108,8 +108,8 @@ __metadata:
   linkType: hard
 
 "@babel/traverse@npm:^7.0.0-beta.42":
-  version: 7.22.15
-  resolution: "@babel/traverse@npm:7.22.15"
+  version: 7.22.17
+  resolution: "@babel/traverse@npm:7.22.17"
   dependencies:
     "@babel/code-frame": ^7.22.13
     "@babel/generator": ^7.22.15
@@ -117,22 +117,22 @@ __metadata:
     "@babel/helper-function-name": ^7.22.5
     "@babel/helper-hoist-variables": ^7.22.5
     "@babel/helper-split-export-declaration": ^7.22.6
-    "@babel/parser": ^7.22.15
-    "@babel/types": ^7.22.15
+    "@babel/parser": ^7.22.16
+    "@babel/types": ^7.22.17
     debug: ^4.1.0
     globals: ^11.1.0
-  checksum: 12aba7da6fd6109905d5086e1a9d1aea2cdbb0b80533d2d235d5dad2ff97f0315173c063023e601e96086dfeaaeb97f9d3cbaf38a10f04820e47e2848607cef4
+  checksum: 1153ca166a0a9b3fddf67f7f7c8c5b4f88aa2c2c00261ff2fc8424a63bc93250ed3fd08b04bd526ad19e797aeb6f22161120646a570cbfe5ff2a5d2f5d28af01
   languageName: node
   linkType: hard
 
-"@babel/types@npm:^7.0.0-beta.42, @babel/types@npm:^7.22.15, @babel/types@npm:^7.22.5, @babel/types@npm:^7.8.3":
-  version: 7.22.15
-  resolution: "@babel/types@npm:7.22.15"
+"@babel/types@npm:^7.0.0-beta.42, @babel/types@npm:^7.22.15, @babel/types@npm:^7.22.17, @babel/types@npm:^7.22.5, @babel/types@npm:^7.8.3":
+  version: 7.22.17
+  resolution: "@babel/types@npm:7.22.17"
   dependencies:
     "@babel/helper-string-parser": ^7.22.5
     "@babel/helper-validator-identifier": ^7.22.15
     to-fast-properties: ^2.0.0
-  checksum: a2aa59746dc8500c358a3a9afca2adff49dbade009d616aa8308714485064f2218da04e1823f1243a4992f1424ec6d6719e76a7af9a0ac3647227dca3015eea4
+  checksum: 7382220f6eb2548f2c867a98916c3aa8a6063498d5372e5d21d8d184ba354033defb72aeba5858c1b2b42177058b896a34a7dcbae5eccd47fb0104721efa909d
   languageName: node
   linkType: hard
 
@@ -514,15 +514,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gpt-tokenizer@npm:^2.1.1":
-  version: 2.1.1
-  resolution: "gpt-tokenizer@npm:2.1.1"
-  dependencies:
-    rfc4648: ^1.5.2
-  checksum: f04eeeb4a1ddbe14b7dc08e1ec6792e1ade341e3ab0296ce7549ac77f007bf28864e0b4ebadc142298e212fe1856b45671e9e00cf173d41b71dae9e1da3a27ea
-  languageName: node
-  linkType: hard
-
 "has-flag@npm:^3.0.0":
   version: 3.0.0
   resolution: "has-flag@npm:3.0.0"
@@ -593,11 +584,10 @@ __metadata:
 
 "omnilib-llms@https://github.com/manu-sapiens/omnilib-llms.git#main":
   version: 1.0.0
-  resolution: "omnilib-llms@https://github.com/manu-sapiens/omnilib-llms.git#commit=faffcdf2bbfadd877c1c1b6bd1744238bb445efd"
+  resolution: "omnilib-llms@https://github.com/manu-sapiens/omnilib-llms.git#commit=dc338f9e1bb99a4e601cf609cbe7bd6f6d7be651"
   dependencies:
-    gpt-tokenizer: ^2.1.1
     omnilib-utils: "https://github.com/manu-sapiens/omnilib-utils.git#main"
-  checksum: 79b9e6d6624bcbe318cf91c9aab31834ea901e1199c55029642d2fb4c58dee06f69bf3cba1933f7642c551a0705b2a7e7b3fb1e56e88a69c38d0a86dc891b6e0
+  checksum: 48a4076580e74c390f9430a2c6003d1e178a0e330edec72089607c7b5d3ebfecdcf6226c24134d88c8023b36f29f9f38deeb0ec8c07e3d59ce31d2051b62d0cc
   languageName: node
   linkType: hard
 
@@ -605,13 +595,6 @@ __metadata:
   version: 1.0.0
   resolution: "omnilib-utils@https://github.com/manu-sapiens/omnilib-utils.git#commit=c3e9d003108073075745dc5bdbee6a2214ab87c2"
   checksum: b733087847508f850a80760e845b0156f0bb0e2fd89feb4696e0903f4478a475b021ebff95b81eec24e0d907a658be7c285d89b87cb6c2c8c6f86221acefc464
-  languageName: node
-  linkType: hard
-
-"rfc4648@npm:^1.5.2":
-  version: 1.5.2
-  resolution: "rfc4648@npm:1.5.2"
-  checksum: bc3d9c4fbfdbbb363c640f9cb56fc01d2e1ca64305b2b6409aaf59cb85c1adecb2545c03deee8889cce2685e15fb7dd47581665c288e4f45068ffece2642f2e8
   languageName: node
   linkType: hard
 
