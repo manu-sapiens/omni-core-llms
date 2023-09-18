@@ -1,18 +1,16 @@
 //@ts-check
-// extension.js
-import { LlmQueryComponent } from "./component_LlmQuery.js";
-
+import { async_getLlmQueryComponent_Universal } from "./component_LlmQuery.js";
 import { async_getLlmManagerComponent_Openai } from "./component_LlmManager_Openai.js";
-import { LlmQueryComponent_Openai } from "./component_LlmQuery_Openai.js";
-
-// TBD: Move async_getLlmManagerOobaboogaComponen and LlmManagerLmStudioComponent into their own extension
-
+import { async_getLlmQueryComponent_Openai } from "./component_LlmQuery_Openai.js";
 
 async function CreateComponents() 
 {
   const LlmManagerOpenaiComponent = await async_getLlmManagerComponent_Openai();
+  const LlmQueryComponent_Openai = await async_getLlmQueryComponent_Openai();
+  const LlmQueryComponent_Universal = await async_getLlmQueryComponent_Universal();
+
   const components = [
-    LlmQueryComponent, 
+    LlmQueryComponent_Universal, 
     LlmManagerOpenaiComponent, 
     LlmQueryComponent_Openai,
     ];

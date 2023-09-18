@@ -2,12 +2,22 @@
 // component_LlmQuery.ts
 import { createComponent } from 'omnilib-utils/component.js';
 import { queryLlmByModelId, DEFAULT_LLM_MODEL_ID } from 'omnilib-llms/llms.js';
-import { get_llm_query_inputs, LLM_QUERY_OUTPUT, LLM_QUERY_CONTROL } from 'omnilib-llms/llmComponent.js';
-const NS_ONMI = 'text_generation';
+import { getLlmQueryInputs, LLM_QUERY_OUTPUT, LLM_QUERY_CONTROL } from 'omnilib-llms/llmComponent.js';
+const GROUP_ID = 'text_generation';
 
-const links = {};
+export async function async_getLlmQueryComponent_Universal()
+{
+    const links = {};
+    const input = await getLlmQueryInputs(true);
+    const output = LLM_QUERY_OUTPUT;
+    const control = LLM_QUERY_CONTROL;
+    
+    const LlmQueryComponent = createComponent(GROUP_ID, 'llm_query_universal','LLM Query (Universal)', 'Text Generation','Query a LLM using its id', 'Query the specified LLM from various providers', links, input, output, control, runUniversalPayload );
+    
+    return LlmQueryComponent;
+}
 
-const LlmQueryComponent = createComponent(NS_ONMI, 'llm_query_universal','LLM Query (Universal)', 'Text Generation','Query a LLM using its id', 'Query the specified LLM from various providers', links, get_llm_query_inputs(DEFAULT_LLM_MODEL_ID), LLM_QUERY_OUTPUT, LLM_QUERY_CONTROL, runUniversalPayload );
+
 
 async function runUniversalPayload(payload, ctx) 
 {
@@ -25,4 +35,3 @@ async function runUniversalPayload(payload, ctx)
     return response;
 }
 
-export { LlmQueryComponent };

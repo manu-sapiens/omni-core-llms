@@ -4,17 +4,17 @@ await(async()=>{let{dirname:e}=await import("path"),{fileURLToPath:i}=await impo
 
 // node_modules/omnilib-utils/component.js
 import { OAIBaseComponent, WorkerContext, OmniComponentMacroTypes } from "mercs_rete";
-function generateTitle(name) {
-  const title = name.replace(/_/g, " ").replace(/\b\w/g, (match) => match.toUpperCase());
+function generateTitle(value) {
+  const title = value.replace(/_/g, " ").replace(/\b\w/g, (match) => match.toUpperCase());
   return title;
 }
 function setComponentInputs(component, inputs) {
   inputs.forEach(function(input) {
-    var name = input.name, type = input.type, customSocket = input.customSocket, description = input.description, default_value = input.defaultValue, title = input.title, choices = input.choices, minimum = input.minimum, maximum = input.maximum, step = input.step;
+    var name = input.name, type = input.type, customSocket = input.customSocket, description = input.description, default_value = input.defaultValue, title = input.title, choices = input.choices, minimum = input.minimum, maximum = input.maximum, step = input.step, allow_multiple = input.allowMultiple;
     if (!title || title == "")
       title = generateTitle(name);
     component.addInput(
-      component.createInput(name, type, customSocket).set("title", title || "").set("description", description || "").set("choices", choices || null).set("minimum", minimum || null).set("maximum", maximum || null).set("step", step || null).setDefault(default_value).toOmniIO()
+      component.createInput(name, type, customSocket).set("title", title || "").set("description", description || "").set("choices", choices || null).set("minimum", minimum || null).set("maximum", maximum || null).set("step", step || null).set("allowMultiple", allow_multiple || null).setDefault(default_value).toOmniIO()
     );
   });
   return component;
@@ -41,13 +41,13 @@ function setComponentControls(component, controls) {
   });
   return component;
 }
-function createComponent(group_id, id, title, category, description, summary, links3, inputs, outputs, controls, payloadParser) {
-  if (!links3)
-    links3 = {};
+function createComponent(group_id, id, title, category, description, summary, links2, inputs, outputs, controls, payloadParser) {
+  if (!links2)
+    links2 = {};
   let baseComponent = OAIBaseComponent.create(group_id, id).fromScratch().set("title", title).set("category", category).set("description", description).setMethod("X-CUSTOM").setMeta({
     source: {
       summary,
-      links: links3
+      links: links2
     }
   });
   baseComponent = setComponentInputs(baseComponent, inputs);
@@ -59,14 +59,11 @@ function createComponent(group_id, id, title, category, description, summary, li
   return component;
 }
 
-// node_modules/omnilib-llms/llm.js
-import { omnilog as omnilog2 } from "mercs_shared";
-
 // node_modules/omnilib-utils/files.js
 import { ClientExtension, ClientUtils } from "mercs_client";
 
 // node_modules/omnilib-utils/utils.js
-import { omnilog } from "mercs_shared";
+import { omnilog } from "omni-shared";
 var VERBOSE = true;
 function is_valid(value) {
   if (value === null || value === void 0) {
@@ -229,7 +226,7 @@ var Llm = class {
   getModelType() {
     throw new Error("You have to implement this method");
   }
-  async getModelChoices(choices, llm_model_types, llm_context_sizes) {
+  async getModelChoices(choices, llm_model_types2, llm_context_sizes2) {
     throw new Error("You have to implement this method");
   }
 };
@@ -366,7 +363,7 @@ var Llm_Openai = class extends Llm {
   getModelType() {
     return LLM_MODEL_TYPE_OPENAI;
   }
-  async getModelChoices(choices, llm_model_types, llm_context_sizes) {
+  async getModelChoices(choices, llm_model_types2, llm_context_sizes2) {
     const models = Object.values(llm_openai_models);
     for (const model of models) {
       let model_name = model.model_name;
@@ -374,8 +371,8 @@ var Llm_Openai = class extends Llm {
       let model_id = generateModelId(model_name, provider);
       const title = model.title || deduceLlmTitle(model_name, provider, ICON_OPENAI);
       const description = model.description || deduceLlmDescription(model_name, model.context_size);
-      llm_model_types[model_name] = model.type;
-      llm_context_sizes[model_name] = model.context_size;
+      llm_model_types2[model_name] = model.type;
+      llm_context_sizes2[model_name] = model.context_size;
       const choice = { value: model_id, title, description };
       choices.push(choice);
     }
@@ -423,10 +420,18 @@ var Llm_Openai = class extends Llm {
 };
 
 // node_modules/omnilib-llms/llms.js
-var DEFAULT_LLM_MODEL_ID = "gpt-3.5-turbo|openai";
+var llm_model_types = {};
+var llm_context_sizes = {};
 var default_providers = [];
 var llm_Openai = new Llm_Openai();
 default_providers.push(llm_Openai);
+async function getLlmChoices() {
+  let choices = [];
+  for (const provider of default_providers) {
+    await provider.getModelChoices(choices, llm_model_types, llm_context_sizes);
+  }
+  return choices;
+}
 function getBlockName(model_id) {
   const splits = getModelNameAndProviderFromId(model_id);
   const model_name = splits.model_name;
@@ -445,14 +450,15 @@ async function queryLlmByModelId(ctx, prompt, instruction, model_id, temperature
 }
 
 // node_modules/omnilib-llms/llmComponent.js
-function get_llm_query_inputs(default_llm = "") {
-  const input = [
-    { name: "instruction", type: "string", description: "Instruction(s)", defaultValue: "You are a helpful bot answering the user with their question to the best of your abilities", customSocket: "text" },
-    { name: "prompt", type: "string", customSocket: "text", description: "Prompt(s)" },
-    { name: "temperature", type: "number", defaultValue: 0.7, minimum: 0, maximum: 2, description: "The randomness regulator, higher for more creativity, lower for more structured, predictable text." }
-  ];
-  if (default_llm != "") {
-    input.push({ name: "model_id", type: "string", customSocket: "text", defaultValue: default_llm, description: "The provider of the LLM model to use" });
+async function getLlmQueryInputs(use_openai_default = false) {
+  const input = [];
+  input.push({ name: "instruction", type: "string", description: "Instruction(s)", defaultValue: "You are a helpful bot answering the user with their question to the best of your abilities", customSocket: "text" });
+  input.push({ name: "prompt", type: "string", customSocket: "text", description: "Prompt(s)" });
+  input.push({ name: "temperature", type: "number", defaultValue: 0.7, minimum: 0, maximum: 2, description: "The randomness regulator, higher for more creativity, lower for more structured, predictable text." });
+  if (use_openai_default) {
+    const llm_choices = await getLlmChoices();
+    const model_id_input = { name: "model_id", title: "model", type: "string", defaultValue: "gpt-3.5-turbo-16k|openai", choices: llm_choices, customSocket: "text" };
+    input.push(model_id_input);
   } else {
     input.push({ name: "model_id", type: "string", customSocket: "text", description: "The provider of the LLM model to use" });
   }
@@ -464,20 +470,20 @@ var LLM_QUERY_OUTPUT = [
   { name: "answer_json", type: "object", customSocket: "object", description: "The answer in json format, with possibly extra arguments returned by the LLM", title: "Json" }
 ];
 var LLM_QUERY_CONTROL = null;
-function createLlmQueryComponent(model_provider, links3, payloadParser) {
+async function async_getLlmQueryComponent(model_provider, links2, payloadParser, use_openai_default = false) {
   const group_id = model_provider;
   const id = `llm_query`;
   const title = `LLM Query via ${model_provider}`;
   const category = "LLM";
   const description = `Query a LLM with ${model_provider}`;
   const summary = `Query the specified LLM via ${model_provider}`;
-  const inputs = get_llm_query_inputs();
+  const inputs = await getLlmQueryInputs(use_openai_default);
   const outputs = LLM_QUERY_OUTPUT;
   const controls = LLM_QUERY_CONTROL;
-  const component = createComponent(group_id, id, title, category, description, summary, links3, inputs, outputs, controls, payloadParser);
+  const component = createComponent(group_id, id, title, category, description, summary, links2, inputs, outputs, controls, payloadParser);
   return component;
 }
-function extractPayload(payload, model_provider) {
+function extractLlmQueryPayload(payload, model_provider) {
   if (!payload)
     throw new Error("No payload provided.");
   const instruction = payload.instruction;
@@ -502,9 +508,15 @@ function extractPayload(payload, model_provider) {
 }
 
 // component_LlmQuery.js
-var NS_ONMI = "text_generation";
-var links = {};
-var LlmQueryComponent = createComponent(NS_ONMI, "llm_query_universal", "LLM Query (Universal)", "Text Generation", "Query a LLM using its id", "Query the specified LLM from various providers", links, get_llm_query_inputs(DEFAULT_LLM_MODEL_ID), LLM_QUERY_OUTPUT, LLM_QUERY_CONTROL, runUniversalPayload);
+var GROUP_ID = "text_generation";
+async function async_getLlmQueryComponent_Universal() {
+  const links2 = {};
+  const input = await getLlmQueryInputs(true);
+  const output = LLM_QUERY_OUTPUT;
+  const control = LLM_QUERY_CONTROL;
+  const LlmQueryComponent = createComponent(GROUP_ID, "llm_query_universal", "LLM Query (Universal)", "Text Generation", "Query a LLM using its id", "Query the specified LLM from various providers", links2, input, output, control, runUniversalPayload);
+  return LlmQueryComponent;
+}
 async function runUniversalPayload(payload, ctx) {
   const failure = { result: { "ok": false }, answer_text: "", answer_json: null };
   if (!payload)
@@ -522,23 +534,19 @@ async function runUniversalPayload(payload, ctx) {
 var MODEL_PROVIDER = "openai";
 var PROVIDER_NAME = "OpenAI";
 async function async_getLlmManagerComponent_Openai() {
-  const llm2 = new Llm_Openai();
-  const choices = [];
-  const llm_model_types = {};
-  const llm_context_sizes = {};
-  await llm2.getModelChoices(choices, llm_model_types, llm_context_sizes);
+  const llm_choices = await getLlmChoices();
   const inputs = [
-    { name: "model_id", type: "string", customSocket: "text", defaultValue: DEFAULT_LLM_MODEL_ID, choices },
+    { name: "model_id", title: "model", type: "string", defaultValue: "gpt-3.5-turbo-16k|openai", choices: llm_choices, customSocket: "text" },
     { name: "functions", title: "functions", type: "array", customSocket: "objectArray", description: "Optional functions to constrain the LLM output" },
     { name: "args", type: "object", customSocket: "object", description: "Extra arguments provided to the LLM" }
   ];
   const outputs = [
     { name: "model_id", type: "string", customSocket: "text", description: "The ID of the selected LLM model" },
-    { name: "args", type: "object", customSocket: "object", description: "Extra arguments provided to the LLM" }
+    { name: "args", title: "Model Args", type: "object", customSocket: "object", description: "Extra arguments provided to the LLM" }
   ];
   const controls = null;
-  const links3 = {};
-  const LlmManagerComponent = createComponent(MODEL_PROVIDER, "llm_manager", `LLM Manager: ${PROVIDER_NAME}`, "Text Generation", `Manage LLMs from provider: ${PROVIDER_NAME}`, `Manage LLMs from provider: ${PROVIDER_NAME}`, links3, inputs, outputs, controls, parsePayload);
+  const links2 = {};
+  const LlmManagerComponent = createComponent(MODEL_PROVIDER, "llm_manager", `LLM Manager: ${PROVIDER_NAME}`, "Text Generation", `Manage LLMs from provider: ${PROVIDER_NAME}`, `Manage LLMs from provider: ${PROVIDER_NAME}`, links2, inputs, outputs, controls, parsePayload);
   return LlmManagerComponent;
 }
 async function parsePayload(payload, ctx) {
@@ -558,10 +566,13 @@ async function parsePayload(payload, ctx) {
 // component_LlmQuery_Openai.js
 var MODEL_PROVIDER2 = "openai";
 var llm = new Llm_Openai();
-var links2 = {};
-var LlmQueryComponent_Openai = createLlmQueryComponent(MODEL_PROVIDER2, links2, runProviderPayload);
+var links = {};
+async function async_getLlmQueryComponent_Openai() {
+  const result = await async_getLlmQueryComponent(MODEL_PROVIDER2, links, runProviderPayload, true);
+  return result;
+}
 async function runProviderPayload(payload, ctx) {
-  const { instruction, prompt, temperature, model_name, args } = extractPayload(payload, MODEL_PROVIDER2);
+  const { instruction, prompt, temperature, model_name, args } = extractLlmQueryPayload(payload, MODEL_PROVIDER2);
   const response = await llm.query(ctx, prompt, instruction, model_name, temperature, args);
   return response;
 }
@@ -569,8 +580,10 @@ async function runProviderPayload(payload, ctx) {
 // extension.js
 async function CreateComponents() {
   const LlmManagerOpenaiComponent = await async_getLlmManagerComponent_Openai();
+  const LlmQueryComponent_Openai = await async_getLlmQueryComponent_Openai();
+  const LlmQueryComponent_Universal = await async_getLlmQueryComponent_Universal();
   const components = [
-    LlmQueryComponent,
+    LlmQueryComponent_Universal,
     LlmManagerOpenaiComponent,
     LlmQueryComponent_Openai
   ];

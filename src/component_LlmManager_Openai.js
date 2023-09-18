@@ -1,31 +1,26 @@
 //@ts-check
 import { createComponent } from 'omnilib-utils/component.js';
-import { DEFAULT_LLM_MODEL_ID } from 'omnilib-llms/llms.js';
-import { Llm_Openai } from 'omnilib-llms/llm_Openai.js'
+import { getLlmChoices } from 'omnilib-llms/llms.js';
+
 const MODEL_PROVIDER = 'openai';
 const PROVIDER_NAME = "OpenAI"
 
 export async function async_getLlmManagerComponent_Openai()
 {
-    const llm = new Llm_Openai();
-    const choices = [];
-    const llm_model_types = {};
-    const llm_context_sizes = {};
-    await llm.getModelChoices(choices, llm_model_types, llm_context_sizes);
+    const llm_choices = await getLlmChoices();
 
     const inputs = [
-        { name: 'model_id', type: 'string', customSocket: 'text', defaultValue: DEFAULT_LLM_MODEL_ID, choices: choices},
+        { name: 'model_id', title: 'model', type: 'string', defaultValue: 'gpt-3.5-turbo-16k|openai', choices: llm_choices , customSocket: 'text'},
         { name: 'functions', title: 'functions', type: 'array', customSocket: 'objectArray', description: 'Optional functions to constrain the LLM output' },
         { name: 'args', type: 'object', customSocket: 'object', description: 'Extra arguments provided to the LLM'},
     ];
     const outputs = [
         { name: 'model_id', type: 'string', customSocket: 'text', description: "The ID of the selected LLM model"},
-        { name: 'args', type: 'object', customSocket: 'object', description: 'Extra arguments provided to the LLM'},
+        { name: 'args', title: "Model Args", type: 'object', customSocket: 'object', description: 'Extra arguments provided to the LLM'},
     ]
     const controls = null; //[{ name: "functions", title: "LLM Functions", placeholder: "AlpineCodeMirrorComponent", description: "Functions to constrain the output of the LLM" },];
 
     const links = {}
-
 
     const LlmManagerComponent = createComponent(MODEL_PROVIDER, 'llm_manager',`LLM Manager: ${PROVIDER_NAME}`, 'Text Generation',`Manage LLMs from provider: ${PROVIDER_NAME}`, `Manage LLMs from provider: ${PROVIDER_NAME}`, links, inputs, outputs, controls, parsePayload );
 
@@ -36,7 +31,6 @@ export async function async_getLlmManagerComponent_Openai()
 async function parsePayload(payload, ctx) 
 {
     const failure = { result: { "ok": false }, model_id: null};
-
 
     const args = payload.args;
     const functions = payload.functions;

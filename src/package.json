@@ -7,8 +7,7 @@
   },
   "dependencies": {
     "esnext": "^3.3.1",
-    "omnilib-llms": "https://github.com/manu-sapiens/omnilib-llms.git#main",
-    "omnilib-utils": "https://github.com/manu-sapiens/omnilib-utils.git#main"
+    "omnilib-llms": "https://github.com/manu-sapiens/omnilib-llms.git#main"
   },
   "devDependencies": {
     "esbuild": "^0.19.2"

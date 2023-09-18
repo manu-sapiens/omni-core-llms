@@ -30,7 +30,7 @@ const shimBanner = {
   "js": ESM_REQUIRE_SHIM
 };
 
-const externals = ['mercs_rete', 'mercs_shared', 'mercs_client', 'gpt-tokenizer' ];
+const externals = ['mercs_rete', 'omni-shared', 'mercs_client', 'gpt-tokenizer' ];
 const buildOptions_fix = {
       format: "esm",
       target: "esnext",
