@@ -13,7 +13,7 @@ const buildOptions_plugin = {
   format: 'esm',
   platform: 'node',
   target: 'es2020',
-  external: ['mercs_rete'], // Add other options as needed
+  external: ['omni-sockets'], // Add other options as needed
   loader: {
     '.node': 'binary',
   },  
@@ -30,7 +30,7 @@ const shimBanner = {
   "js": ESM_REQUIRE_SHIM
 };
 
-const externals = ['mercs_rete', 'omni-shared', 'mercs_client', 'gpt-tokenizer' ];
+const externals = ['omni-sockets', 'omni-shared', 'omni-client-services', 'gpt-tokenizer' ];
 const buildOptions_fix = {
       format: "esm",
       target: "esnext",
