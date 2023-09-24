@@ -2,12 +2,10 @@
   "name": "omni-core-llms",
   "packageManager": "yarn@3.3.1",
   "scripts": {
-    "build": "node yarn_build.ts",
-    "update": "node yarn_update.js"
+    "build": "node yarn_build.ts"
   },
   "dependencies": {
-    "esnext": "^3.3.1",
-    "omnilib-llms": "https://github.com/manu-sapiens/omnilib-llms.git#main"
+    "esnext": "^3.3.1"
   },
   "devDependencies": {
     "esbuild": "^0.19.2"

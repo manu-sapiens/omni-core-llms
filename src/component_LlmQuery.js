@@ -1,8 +1,8 @@
 //@ts-check
 // component_LlmQuery.ts
-import { createComponent } from 'omnilib-utils/component.js';
-import { queryLlmByModelId, DEFAULT_LLM_MODEL_ID } from 'omnilib-llms/llms.js';
-import { getLlmQueryInputs, LLM_QUERY_OUTPUT, LLM_QUERY_CONTROL } from 'omnilib-llms/llmComponent.js';
+import { createComponent } from 'omni-utils'; //'omnilib-utils/component.js';
+import { queryLlmByModelId, DEFAULT_LLM_MODEL_ID } from 'omni-utils'; //'omnilib-llms/llms.js';
+import { getLlmQueryInputs, LLM_QUERY_OUTPUT, LLM_QUERY_CONTROL } from 'omni-utils'; //'omnilib-llms/llmComponent.js';
 const GROUP_ID = 'text_generation';
 
 export async function async_getLlmQueryComponent_Universal()

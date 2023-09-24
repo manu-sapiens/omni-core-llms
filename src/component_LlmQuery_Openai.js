@@ -1,6 +1,6 @@
 //@ts-check
-import { async_getLlmQueryComponent, extractLlmQueryPayload } from 'omnilib-llms/llmComponent.js';
-import { Llm_Openai } from 'omnilib-llms/llm_Openai.js'
+import { async_getLlmQueryComponent, extractLlmQueryPayload } from 'omni-utils'; //'omnilib-llms/llmComponent.js';
+import { Llm_Openai } from 'omni-utils'; //'omnilib-llms/llm_Openai.js'
 const MODEL_PROVIDER = 'openai';
 
 const llm = new Llm_Openai();
