@@ -11,7 +11,7 @@ export async function async_getLlmManagerComponent_Openai()
 
     const inputs = [
         { name: 'model_id', title: 'model', type: 'string', defaultValue: 'gpt-3.5-turbo-16k|openai', choices: llm_choices , customSocket: 'text'},
-        { name: 'functions', title: 'functions', type: 'array', customSocket: 'objectArray', description: 'Optional functions to constrain the LLM output' },
+        { name: 'function', title: 'function', type: 'object', customSocket: 'object', description: 'Optional function to constrain the LLM output' },
         { name: 'args', type: 'object', customSocket: 'object', description: 'Extra arguments provided to the LLM'},
     ];
     const outputs = [
@@ -33,11 +33,11 @@ async function parsePayload(payload, ctx)
     const failure = { result: { "ok": false }, model_id: null};
 
     const args = payload.args;
-    const functions = payload.functions;
+    const chatgpt_function = payload.function;
     const model_id = payload.model_id;
 
     const block_args = {...args}
-    if (functions) block_args['functions'] = functions;
+    if (chatgpt_function) block_args['function'] = chatgpt_function;
     if (!payload) return failure;
     
 
