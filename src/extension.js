@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) 2023 MERCENARIES.AI PTE. LTD.
+ * All rights reserved.
+ */
+
 //@ts-check
 import { async_getLlmQueryComponent_Universal } from "./component_LlmQuery.js";
 import { async_getLlmManagerComponent_Openai } from "./component_LlmManager_Openai.js";
