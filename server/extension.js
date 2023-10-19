@@ -1,16 +1,9 @@
-/**
- * Copyright (c) 2023 MERCENARIES.AI PTE. LTD.
- * All rights reserved.
- */
-
 
 await(async()=>{let{dirname:e}=await import("path"),{fileURLToPath:i}=await import("url");if(typeof globalThis.__filename>"u"&&(globalThis.__filename=i(import.meta.url)),typeof globalThis.__dirname>"u"&&(globalThis.__dirname=e(globalThis.__filename)),typeof globalThis.require>"u"){let{default:a}=await import("module");globalThis.require=a.createRequire(import.meta.url)}})();
 
 
 // component_LlmQuery.js
-import { createComponent } from "omni-utils";
-import { queryLlmByModelId, DEFAULT_LLM_MODEL_ID } from "omni-utils";
-import { getLlmQueryInputs, LLM_QUERY_OUTPUT, LLM_QUERY_CONTROL } from "omni-utils";
+import { createComponent, queryLlmByModelId, DEFAULT_LLM_MODEL_ID, getLlmQueryInputs, LLM_QUERY_OUTPUT, LLM_QUERY_CONTROL } from "../../../src/utils/omni-utils.js";
 var GROUP_ID = "text_generation";
 async function async_getLlmQueryComponent_Universal() {
   const links2 = {};
@@ -34,8 +27,7 @@ async function runUniversalPayload(payload, ctx) {
 }
 
 // component_LlmManager_Openai.js
-import { createComponent as createComponent2 } from "omni-utils";
-import { getLlmChoices } from "omni-utils";
+import { createComponent as createComponent2, getLlmChoices } from "../../../src/utils/omni-utils.js";
 var MODEL_PROVIDER = "openai";
 var PROVIDER_NAME = "OpenAI";
 async function async_getLlmManagerComponent_Openai() {
@@ -69,8 +61,7 @@ async function parsePayload(payload, ctx) {
 }
 
 // component_LlmQuery_Openai.js
-import { async_getLlmQueryComponent, extractLlmQueryPayload } from "omni-utils";
-import { Llm_Openai } from "omni-utils";
+import { async_getLlmQueryComponent, extractLlmQueryPayload, Llm_Openai } from "../../../src/utils/omni-utils.js";
 var MODEL_PROVIDER2 = "openai";
 var llm = new Llm_Openai();
 var links = {};

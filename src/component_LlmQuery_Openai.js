@@ -4,10 +4,9 @@
  */
 
 //@ts-check
-import { async_getLlmQueryComponent, extractLlmQueryPayload } from 'omni-utils'; //'omnilib-llms/llmComponent.js';
-import { Llm_Openai } from 'omni-utils'; //'omnilib-llms/llm_Openai.js'
-const MODEL_PROVIDER = 'openai';
+import { async_getLlmQueryComponent, extractLlmQueryPayload , Llm_Openai } from '../../../src/utils/omni-utils.js';
 
+const MODEL_PROVIDER = 'openai';
 const llm = new Llm_Openai();
 const links = {}; // TBD: provide proper links
 

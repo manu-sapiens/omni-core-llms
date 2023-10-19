@@ -4,8 +4,7 @@
  */
 
 //@ts-check
-import { createComponent } from 'omni-utils'; //'omnilib-utils/component.js';
-import { getLlmChoices } from 'omni-utils'; //'omnilib-llms/llms.js';
+import { createComponent, getLlmChoices } from '../../../src/utils/omni-utils.js';
 
 const MODEL_PROVIDER = 'openai';
 const PROVIDER_NAME = "OpenAI"
